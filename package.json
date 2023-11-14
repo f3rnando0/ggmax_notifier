@@ -1,0 +1,21 @@
+{
+  "dependencies": {
+    "discord.js": "^14.13.0",
+    "dotenv": "^16.3.1",
+    "typescript": "^5.2.2"
+  },
+  "name": "ggmax_flipper",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "dev": "ts-node src/index.ts"
+  },
+  "keywords": [],
+  "author": "foolish8932",
+  "license": "ISC",
+  "description": "GGMAX website new accounts posts notifier and other functions inside posts, like generating 'pix' qrcode",
+  "devDependencies": {
+    "@types/node": "^20.9.0",
+    "ts-node": "^10.9.1"
+  }
+}
