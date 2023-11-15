@@ -13,13 +13,28 @@ import { config } from 'dotenv';
 import { compare } from './utils/compare';
 import { readFileSync, writeFileSync } from 'fs';
 config();
+const client: Client<boolean> = new Client({
+  intents: [GatewayIntentBits.Guilds],
+  partials: [Partials.Channel],
+});
+
+process.on('unhandledRejection', (error) => {
+  console.log(error);
+  client.destroy()
+  .then(() => {
+    client.login(process.env.CLIENT_TOKEN);
+  })
+})
+
+process.on('uncaughtException', (error) => {
+  console.log(error);
+  client.destroy()
+  .then(() => {
+    client.login(process.env.CLIENT_TOKEN);
+  })
+})
 
 try {
-  const client: Client<boolean> = new Client({
-    intents: [GatewayIntentBits.Guilds],
-    partials: [Partials.Channel],
-  });
-
   client.on('ready', async () => {
     const mainGuild = client.guilds.cache.find(
       (c) => c.id === process.env.CLIENT_GUILD
@@ -52,7 +67,9 @@ try {
 
       const compared = compare(actual, json);
 
-      console.log(`[${new Date().toISOString()}] refreshed ${compared.length} accounts`);
+      console.log(
+        `[${new Date().toISOString()}] refreshed ${compared.length} accounts`
+      );
 
       if (compared.length > 0) {
         compared.map((c) => {
@@ -93,12 +110,16 @@ try {
           });
         });
 
-        writeFileSync('./default.json', JSON.stringify(json, null , 2), 'utf-8');
+        writeFileSync('./default.json', JSON.stringify(json, null, 2), 'utf-8');
       }
     }, 1000 * 30);
   });
 
   client.login(process.env.CLIENT_TOKEN);
 } catch (error: any) {
-  throw new Error(error);
+  console.log(error);
+  client.destroy()
+  .then(() => {
+    client.login(process.env.CLIENT_TOKEN);
+  })
 }
